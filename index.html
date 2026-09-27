@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codificar para Incluir e Evoluir</title>
+    <style>
+        /* CSS */
+        :root {
+            --primary: #2563eb;
+            --bg-color: #f8fafc;
+            --text-dark: #1e293b;
+            --sidebar-bg: #ffffff;
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-dark); overflow-x: hidden; }
+        
+        /* Tela Inicial */
+        #home-view { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .hero-text { text-align: center; margin-bottom: 40px; }
+        .hero-text h1 { font-size: 2.5rem; color: var(--primary); margin-bottom: 10px; }
+        .hero-text p { font-size: 1.2rem; color: #64748b; }
+        
+        .menu-cards { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 1000px; }
+        .card-btn {
+            background: white; border: none; border-radius: 12px; padding: 30px 20px;
+            width: 300px; cursor: pointer; transition: all 0.3s ease;
+            box-shadow: var(--card-shadow); display: flex; flex-direction: column; align-items: center;
+        }
+        .card-btn:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1); border-bottom: 4px solid var(--primary); }
+        .card-btn h3 { font-size: 1.2rem; color: var(--text-dark); margin-bottom: 10px; }
+        .card-btn span { font-size: 0.9rem; color: #64748b; text-align: center; }
+
+        /* Painel com Menu Lateral */
+        #course-view { display: none; height: 100vh; width: 100vw; }
+        .layout { display: flex; height: 100%; }
+        
+        aside { width: 300px; background: var(--sidebar-bg); box-shadow: 2px 0 5px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid #e2e8f0; }
+        .back-btn { background: none; border: none; color: #64748b; cursor: pointer; font-size: 1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 5px; }
+        .back-btn:hover { color: var(--primary); }
+        .sidebar-header h2 { font-size: 1.2rem; color: var(--primary); line-height: 1.3; }
+        
+        .lesson-list { list-style: none; overflow-y: auto; flex: 1; }
+        .lesson-list li { padding: 15px 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: background 0.2s; font-size: 0.95rem; }
+        .lesson-list li:hover, .lesson-list li.active { background: #eff6ff; color: var(--primary); border-left: 4px solid var(--primary); }
+        
+        main { flex: 1; padding: 40px; display: flex; flex-direction: column; }
+        .video-wrapper { background: black; width: 100%; max-width: 900px; margin: 0 auto; border-radius: 12px; overflow: hidden; box-shadow: var(--card-shadow); aspect-ratio: 16/9; }
+        iframe { width: 100%; height: 100%; border: none; }
+        .video-title { max-width: 900px; margin: 20px auto 0; font-size: 1.5rem; }
+
+        /* Tela do Formulário */
+        #form-view { display: none; height: 100vh; flex-direction: column; padding: 40px; align-items: center; }
+        .form-container { width: 100%; max-width: 800px; height: 85vh; background: white; border-radius: 12px; box-shadow: var(--card-shadow); padding: 20px; display: flex; flex-direction: column; }
+    </style>
+</head>
+<body>
+
+    <!-- TELA INICIAL -->
+    <div id="home-view">
+        <div class="hero-text">
+            <img src="imagens/img.png" alt="Capa do Projeto" style="max-width: 100%; max-height: 250px; border-radius: 12px; margin-bottom: 20px; box-shadow: var(--card-shadow); object-fit: cover;">
+            <p>Selecione um módulo abaixo para começar a aprender.</p>
+        </div>
+        <div class="menu-cards">
+            <button class="card-btn" onclick="loadCourse('logica')">
+                <h3>Lógica de Programação</h3>
+                <span>Fundamentos para criar software</span>
+            </button>
+            <button class="card-btn" onclick="loadCourse('word')">
+                <h3>Microsoft Word</h3>
+                <span>Criação de documentos e currículos</span>
+            </button>
+            <button class="card-btn" onclick="loadCourse('excel')">
+                <h3>Microsoft Excel</h3>
+                <span>Planilhas, fórmulas e gráficos</span>
+            </button>
+            <button class="card-btn" onclick="openForm()" style="border: 1px solid #2563eb;">
+                <h3 style="color: #2563eb;">Avaliação do Projeto</h3>
+                <span>Deixe a sua opinião sobre o conteúdo</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- TELA DE CURSO E AULAS -->
+    <div id="course-view">
+        <div class="layout">
+            <aside>
+                <div class="sidebar-header">
+                    <button class="back-btn" onclick="goHome()">← Voltar ao Início</button>
+                    <h2 id="sidebar-course-title">Nome do Curso</h2>
+                </div>
+                <ul class="lesson-list" id="sidebar-lessons">
+                    <!-- Aulas via JavaScript -->
+                </ul>
+            </aside>
+            <main>
+                <div class="video-wrapper">
+                    <iframe id="video-player" src="" allowfullscreen></iframe>
+                </div>
+                <h3 class="video-title" id="current-lesson-title">Título da Aula</h3>
+            </main>
+        </div>
+    </div>
+
+    <!-- TELA DO FORMULÁRIO -->
+    <div id="form-view">
+        <div class="form-container">
+            <button class="back-btn" onclick="goHomeFromForm()" style="margin-bottom: 20px;">← Voltar ao Início</button>
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSf49H6Y6ZUUmLTnPY-rnUA2Uc0T3g5XYweeojbLssb1_dPaVg/viewform?embedded=true" width="100%" height="100%" frameborder="0" marginheight="0" marginwidth="0">A carregar…</iframe>
+        </div>
+    </div>
+
+    <!-- Javascript Lógica -->
+    <script>
+        const data = {
+            logica: {
+                title: "Introdução à Lógica de Programação",
+                lessons: [
+                    { title: "Aula 1: Introdução a Algoritmos", url: "https://www.youtube.com/embed/8mei6uVttho" },
+                    { title: "Aula 2: Primeiro Algoritmo", url: "https://www.youtube.com/embed/M2Af7gkbbro" },
+                    { title: "Aula 3: Comando de Entrada e Operadores", url: "https://www.youtube.com/embed/RDrfZ-7WE8c?si=mvwO5-VyjfudtYDN" },
+                    { title: "Aula 4: Operadores Lógicos e Relacionais", url: "https://www.youtube.com/embed/Ig4QZNpVZYs" },
+                    { title: "Aula 5: Introdução ao Scratch", url: "https://www.youtube.com/embed/GrPkuk1ezyo?si=TU0dzqLfUaTMI1NR" },
+                    { title: "Aula 6: Exercícios de Algoritmo Resolvidos", url: "https://www.youtube.com/embed/v2nCgGSVCeE?si=LER4nOnUqFeu89XJ" },
+                    { title: "Aula 7: Estruturas Condicionais 1", url: "https://www.youtube.com/embed/_g05aHdBAEY?si=k3Mnt9jVnYW4WERG" },
+                    { title: "Aula 8: Estruturas Condicionais 2", url: "https://www.youtube.com/embed/7gGFHzqh4d8?si=qvKLxcBBsCQjSlkQ" },
+                    { title: "Aula 9: Estruturas de Repetição 1", url: "https://www.youtube.com/embed/U5PnCt58Q68?si=eaX-0P-XUM9URGAl" },
+                    { title: "Aula 10: Estruturas de Repetição 2", url: "https://www.youtube.com/embed/fP49L1i_-HU?si=hF609-WSzGZHzWCH" }
+                ]
+            },
+            word: {
+                title: "Aprendendo o Microsoft Word",
+                lessons: [
+                    { title: "Intensivão de Microsoft Word", url: "https://www.youtube.com/embed/pfUnnEKSn2g" }
+                ]
+            },
+            excel: {
+                title: "Aprendendo o Microsoft Excel",
+                lessons: [
+                    { title: "Introdução ao Excel: Guia Completo", url: "https://www.youtube.com/embed/Dol1yw62hWo" }
+                ]
+            }
+        };
+
+        const homeView = document.getElementById('home-view');
+        const courseView = document.getElementById('course-view');
+        const formView = document.getElementById('form-view');
+        const sidebarTitle = document.getElementById('sidebar-course-title');
+        const sidebarLessons = document.getElementById('sidebar-lessons');
+        const videoPlayer = document.getElementById('video-player');
+        const currentLessonTitle = document.getElementById('current-lesson-title');
+
+        function loadCourse(courseId) {
+            const course = data[courseId];
+            sidebarTitle.innerText = course.title;
+            sidebarLessons.innerHTML = ''; 
+
+            course.lessons.forEach((lesson, index) => {
+                const li = document.createElement('li');
+                li.innerText = lesson.title;
+                li.onclick = () => playVideo(lesson, li);
+                sidebarLessons.appendChild(li);
+
+                if (index === 0) {
+                    playVideo(lesson, li);
+                }
+            });
+
+            homeView.style.display = 'none';
+            formView.style.display = 'none';
+            courseView.style.display = 'block';
+        }
+
+        function playVideo(lesson, listItem) {
+            videoPlayer.src = lesson.url;
+            currentLessonTitle.innerText = lesson.title;
+
+            const allItems = sidebarLessons.querySelectorAll('li');
+            allItems.forEach(item => item.classList.remove('active'));
+            listItem.classList.add('active');
+        }
+
+        function goHome() {
+            videoPlayer.src = '';
+            courseView.style.display = 'none';
+            formView.style.display = 'none';
+            homeView.style.display = 'flex';
+        }
+
+        function openForm() {
+            homeView.style.display = 'none';
+            courseView.style.display = 'none';
+            formView.style.display = 'flex';
+        }
+
+        function goHomeFromForm() {
+            formView.style.display = 'none';
+            homeView.style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
